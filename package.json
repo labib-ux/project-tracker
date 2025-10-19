@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "lucide-react": "^0.309.0"  // <--- NEW DEPENDENCY ADDED HERE
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
@@ -19,3 +20,4 @@
     "vite": "^5.2.12"
   }
 }
+
