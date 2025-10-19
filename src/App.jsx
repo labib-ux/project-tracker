@@ -4,7 +4,7 @@ import { Search, Bell, User, Plus, ChevronRight, Calendar, FileText, CheckCircle
 const RPPTDesignSystem = () => {
   const [currentPage, setCurrentPage] = useState('project-detail');
   const [selectedProject, setSelectedProject] = useState(projects[0]);
-  const [activeTab, setActiveTab] = useState('milestones');
+  const [activeTab, setActiveTab] = useState('documents');
   const [notifications, setNotifications] = useState(3);
   const [hoveredCard, setHoveredCard] = useState(null);
 
