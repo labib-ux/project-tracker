@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Search, Bell, User, Plus, ChevronRight, Calendar, FileText, CheckCircle, Clock, AlertCircle, MessageSquare, Upload, Download, Filter, MoreVertical, Check, X, Eye, Trash2, Edit, Star, TrendingUp, Users, Zap, Award, Server, Database, Shield, Settings, Activity, Send } from 'lucide-react';
 
 const RPPTDesignSystem = () => {
-  const [currentPage, setCurrentPage] = useState('admin');
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [currentPage, setCurrentPage] = useState('project-detail');
+  const [selectedProject, setSelectedProject] = useState(projects[0]);
   const [activeTab, setActiveTab] = useState('milestones');
   const [notifications, setNotifications] = useState(3);
   const [hoveredCard, setHoveredCard] = useState(null);
