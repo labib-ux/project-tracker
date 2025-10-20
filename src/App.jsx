@@ -1,32 +1,71 @@
 import React, { useState } from 'react';
-import { Search, Bell, User, Plus, ChevronRight, Calendar, FileText, CheckCircle, Clock, AlertCircle, MessageSquare, Upload, Download, Filter, MoreVertical, Check, X, Eye, Trash2, Edit, Star, TrendingUp, Users, Zap, Award, Server, Database, Shield, Settings, Activity, Send } from 'lucide-react';
+import { Search, Bell, User, Plus, ChevronRight, Calendar, FileText, CheckCircle, Clock, AlertCircle, MessageSquare, Upload, Download, Filter, MoreVertical, Check, X, Eye, Trash2, Edit, Star, TrendingUp, Users, Zap, Award, Server, Database, Shield, Settings, Activity, Send, Key, Minimize2 } from 'lucide-react';
 
 const RPPTDesignSystem = () => {
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  // --- Global State (Reverted to production defaults) ---
+  const [currentPage, setCurrentPage] = useState('login');
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeTab, setActiveTab] = useState('milestones');
   const [notifications, setNotifications] = useState(3);
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // --- Sample Data based on SRS Document ---
-  const projects = [
-    { id: 1, title: 'Machine Learning in Healthcare', progress: 65, status: 'In Progress', supervisor: 'Dr. Rahman', dueDate: '2025-12-15', milestones: 8, completed: 5, color: 'from-blue-500 to-cyan-400', icon: '🤖' },
-    { id: 2, title: 'Blockchain Security Analysis', progress: 40, status: 'In Progress', supervisor: 'Dr. Ahmed', dueDate: '2025-11-30', milestones: 6, completed: 2, color: 'from-purple-500 to-pink-400', icon: '🔐' },
-    { id: 3, title: 'IoT Smart Agriculture System', progress: 85, status: 'Review', supervisor: 'Dr. Khan', dueDate: '2025-10-20', milestones: 10, completed: 9, color: 'from-green-500 to-emerald-400', icon: '🌱' }
-  ];
-  const milestones = [
-    { id: 1, title: 'Literature Review', status: 'completed', dueDate: '2025-09-15', owner: 'Ahnaf', description: 'Comprehensive review of existing ML healthcare applications', documents: 5 },
-    { id: 2, title: 'Methodology Design', status: 'completed', dueDate: '2025-09-30', owner: 'Mahmudul', description: 'Design research methodology and data collection strategy', documents: 3 },
-    { id: 3, title: 'Data Collection', status: 'in-progress', dueDate: '2025-10-18', owner: 'Nafiz', description: 'Gather and preprocess healthcare datasets', documents: 2 },
-    { id: 4, title: 'Implementation', status: 'pending', dueDate: '2025-11-15', owner: 'Raiyana', description: 'Build ML models and system architecture', documents: 0 },
-    { id: 5, title: 'Testing & Results', status: 'pending', dueDate: '2025-12-01', owner: 'Imjam', description: 'Validate models and analyze results', documents: 0 }
-  ];
-  const recentActivities = [
-    { id: 1, type: 'approval', message: 'Dr. Rahman approved your Literature Review', time: '2 hours ago', icon: '✅', color: 'text-green-600' },
-    { id: 2, type: 'comment', message: 'New comment on Methodology document', time: '5 hours ago', icon: '💬', color: 'text-blue-600' },
-    { id: 3, type: 'deadline', message: 'Data Collection due in 3 days', time: '1 day ago', icon: '⚠️', color: 'text-orange-600' },
-    { id: 4, type: 'upload', message: 'Nafiz uploaded Dataset Analysis v2', time: '1 day ago', icon: '📤', color: 'text-purple-600' }
-  ];
+  // --- Sample Data (Upgraded to support isolated project views) ---
+
+  const projectData = {
+    // Project 1: Machine Learning in Healthcare (ID: 1)
+    1: {
+      details: { id: 1, title: 'Machine Learning in Healthcare', progress: 65, status: 'In Progress', supervisor: 'Dr. Rahman', dueDate: '2025-12-15', milestones: 8, completed: 5, color: 'from-blue-500 to-cyan-400', icon: '🤖' },
+      milestones: [
+        { id: 101, title: 'Literature Review', status: 'completed', dueDate: '2025-09-15', owner: 'Ahnaf', description: 'Comprehensive review of existing ML healthcare applications', documents: 5 },
+        { id: 102, title: 'Methodology Design', status: 'completed', dueDate: '2025-09-30', owner: 'Mahmudul', description: 'Design research methodology and data collection strategy', documents: 3 },
+        { id: 103, title: 'Data Collection', status: 'in-progress', dueDate: '2025-10-18', owner: 'Nafiz', description: 'Gather and preprocess healthcare datasets', documents: 2 },
+        { id: 104, title: 'Implementation', status: 'pending', dueDate: '2025-11-15', owner: 'Raiyana', description: 'Build ML models and system architecture', documents: 0 },
+      ],
+      documents: [
+        { name: 'Literature_Review_v3.pdf', size: '2.4 MB', date: '2025-09-15', versions: 3, status: 'approved', milestone: 'Literature Review' },
+        { name: 'Methodology_Design_v2.docx', size: '1.8 MB', date: '2025-09-30', versions: 2, status: 'approved', milestone: 'Methodology Design' },
+      ],
+      comments: [
+        { id: 1001, author: 'Dr. Rahman', time: '1 day ago', text: 'Please ensure ethical clearance documents are uploaded before proceeding to data collection.' },
+        { id: 1002, author: 'Ahnaf', time: '5 hours ago', text: '@Dr. Rahman, understood. Uploading the signed form now.' },
+      ]
+    },
+    // Project 2: Blockchain Security Analysis (ID: 2)
+    2: {
+      details: { id: 2, title: 'Blockchain Security Analysis', progress: 40, status: 'In Progress', supervisor: 'Dr. Ahmed', dueDate: '2025-11-30', milestones: 6, completed: 2, color: 'from-purple-500 to-pink-400', icon: '🔐' },
+      milestones: [
+        { id: 201, title: 'Literature Review (B)', status: 'completed', dueDate: '2025-10-01', owner: 'Mahmudul', description: 'Analysis of existing blockchain protocols.', documents: 2 },
+        { id: 202, title: 'Protocol Simulation', status: 'in-progress', dueDate: '2025-11-15', owner: 'Nafiz', description: 'Setting up simulation environment and initial testing.', documents: 1 },
+      ],
+      documents: [
+        { name: 'Initial_Proposal_v1.pdf', size: '1.2 MB', date: '2025-08-20', versions: 1, status: 'approved', milestone: 'Initial Planning' },
+      ],
+      comments: [
+        { id: 2001, author: 'Dr. Ahmed', time: '1 week ago', text: 'The simulation environment design looks solid. Proceed to testing phase.' },
+      ]
+    },
+    // Project 3: IoT Smart Agriculture System (ID: 3)
+    3: {
+      details: { id: 3, title: 'IoT Smart Agriculture System', progress: 85, status: 'Review', supervisor: 'Dr. Khan', dueDate: '2025-10-20', milestones: 10, completed: 9, color: 'from-green-500 to-emerald-400', icon: '🌱' },
+      milestones: [
+        { id: 301, title: 'Sensor Integration', status: 'completed', dueDate: '2025-09-01', owner: 'Raiyana', description: 'Installation and testing of all field sensors.', documents: 4 },
+        { id: 302, title: 'Final System Testing', status: 'pending', dueDate: '2025-10-20', owner: 'Imjam', description: 'Final comprehensive system validation.', documents: 0 },
+      ],
+      documents: [
+        { name: 'System_Architecture_v2.docx', size: '1.8 MB', date: '2025-09-10', versions: 2, status: 'approved', milestone: 'Architecture Design' },
+        { name: 'Final_Report_Draft.pdf', size: '5.2 MB', date: '2025-10-18', versions: 1, status: 'review', milestone: 'Documentation' },
+      ],
+      comments: [
+        { id: 3001, author: 'Dr. Khan', time: '2 days ago', text: 'Final report draft looks good. Need to check the appendix for sensor calibration logs.' },
+      ]
+    },
+  };
+
+  // Convert dictionary into an array for easy mapping in the dashboard
+  const projects = Object.values(projectData).map(p => p.details);
+
+  // Helper function to get project-specific data
+  const getProjectData = (projectId) => projectData[projectId];
 
   // Data from SRS Feasibility Analysis Section 4.3 and 4.4
   const strategicAnalysisData = {
@@ -37,7 +76,6 @@ const RPPTDesignSystem = () => {
       { year: 4, cashFlow: 5667.40, accumulated: -40233.51 },
       { year: 7, cashFlow: 9846.62, accumulated: -16136.09 },
       { year: 8, cashFlow: 49182.90, accumulated: 33046.81 },
-      // Note: Year 8 shows the significant positive turnaround based on the provided table.
     ],
     swot: [
       { type: 'Strength', title: 'Centralized Artifacts', description: 'Consolidates all project artifacts into a structured repository, ensuring a single source of truth.', color: 'bg-green-100 text-green-800 border-green-300' },
@@ -46,6 +84,13 @@ const RPPTDesignSystem = () => {
       { type: 'Threat', title: 'Competing Platforms', description: 'Existing systems (LMS modules, project tools) may limit adoption; resistance to change is a key threat.', color: 'bg-yellow-100 text-yellow-800 border-yellow-300' },
     ]
   };
+
+  // Sample data for supervisor review (used on Supervisor Dashboard)
+  const pendingReviews = [
+    { id: 1, student: 'Ahnaf Abid Shan', project: 'Machine Learning in Healthcare', document: 'Literature Review v3', submitted: '2 days ago', priority: 'high', avatar: '🧑‍💻', projectId: 1, docId: 101, docName: 'Literature_Review_v3.pdf' },
+    { id: 2, student: 'Mahmudul Hasan', project: 'Blockchain Security', document: 'Methodology Design', submitted: '1 day ago', priority: 'medium', avatar: '👨‍💻', projectId: 2, docId: 201, docName: 'Initial_Proposal_v1.pdf' },
+    { id: 3, student: 'Nafiz Imtiaz', project: 'IoT Agriculture', document: 'Implementation Report', submitted: '5 hours ago', priority: 'high', avatar: '📊', projectId: 3, docId: 302, docName: 'Final_Report_Draft.pdf' }
+  ];
 
   // --- Shared Components ---
   const StatCard = ({ icon: Icon, label, value, color, emoji }) => (
@@ -146,9 +191,8 @@ const RPPTDesignSystem = () => {
             >
               👨‍🏫 Supervisor
             </button>
-            {/* Added Admin button here for convenience, though Admin access typically skips this role selection */}
             <button
-              onClick={() => setCurrentPage('admin')} 
+              onClick={() => setCurrentPage('admin')}
               className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-gray-600 text-white rounded-2xl font-bold hover:from-indigo-400 hover:to-gray-500 transform hover:scale-105 transition-all shadow-lg"
             >
               ⚙️ Admin
@@ -164,6 +208,97 @@ const RPPTDesignSystem = () => {
             animation: float 3s ease-in-out infinite;
           }
         `}</style>
+      </div>
+    );
+  };
+
+  // --- Create User Page (Admin Feature) ---
+  const CreateUserPage = () => {
+    const [userForm, setUserForm] = useState({ name: '', email: '', role: 'student', id: '' });
+
+    const handleInputChange = (e) => {
+      const { id, value } = e.target;
+      setUserForm(prev => ({ ...prev, [id]: value }));
+    };
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      const message = `Account Created:\nName: ${userForm.name}\nRole: ${userForm.role}\nID: ${userForm.id}\n\nReturning to Admin Dashboard.`;
+      console.log(message);
+      setCurrentPage('admin');
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-slate-100 p-8">
+        <header className="max-w-xl mx-auto mb-8 flex items-center gap-4">
+          <button
+            onClick={() => setCurrentPage('admin')}
+            className="p-3 bg-white rounded-2xl shadow-lg hover:bg-gray-100 transition-all group"
+          >
+            <ChevronRight className="w-6 h-6 text-indigo-600 rotate-180" />
+          </button>
+          <h1 className="text-4xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            Create New Account
+          </h1>
+        </header>
+
+        <div className="max-w-xl mx-auto bg-white rounded-3xl p-8 shadow-2xl border-4 border-indigo-200/50">
+          <p className="text-gray-600 mb-6 font-semibold">Provision a new user account for the Research Portal.</p>
+          <form onSubmit={handleSubmit} className="space-y-6">
+
+            {/* Name */}
+            <div>
+              <label htmlFor="name" className="block text-sm font-bold text-gray-900 mb-2">Full Name</label>
+              <input type="text" id="name" required value={userForm.name} onChange={handleInputChange}
+                placeholder="Ahnaf Abid Shan"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 transition-all"
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-bold text-gray-900 mb-2">Email Address</label>
+              <input type="email" id="email" required value={userForm.email} onChange={handleInputChange}
+                placeholder="name.email@university.edu"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 transition-all"
+              />
+            </div>
+
+            {/* Role and ID */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Role */}
+              <div>
+                <label htmlFor="role" className="block text-sm font-bold text-gray-900 mb-2">User Role</label>
+                <select id="role" required value={userForm.role} onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition-all appearance-none"
+                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center' }}
+                >
+                  <option value="student">Student 👨‍🎓</option>
+                  <option value="supervisor">Supervisor 👨‍🏫</option>
+                  <option value="admin">Administrator ⚙️</option>
+                </select>
+              </div>
+
+              {/* ID */}
+              <div>
+                <label htmlFor="id" className="block text-sm font-bold text-gray-900 mb-2">Student/Faculty ID</label>
+                <input type="text" id="id" required value={userForm.id} onChange={handleInputChange}
+                  placeholder="e.g., 0112310423"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Action */}
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-2xl font-black text-lg hover:from-indigo-500 hover:to-purple-500 transition-all transform hover:scale-[1.01] shadow-xl flex items-center justify-center gap-2"
+            >
+              <Key className="w-5 h-5" />
+              Generate Password & Create Account
+            </button>
+          </form>
+        </div>
       </div>
     );
   };
@@ -258,7 +393,6 @@ const RPPTDesignSystem = () => {
                     backgroundPosition: 'right 1rem center',
                   }}
                 >
-                  {/* FIX: Removed 'selected' attribute from the option */}
                   <option value="" disabled>Choose a faculty member</option>
                   {mockSupervisors.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
@@ -279,13 +413,12 @@ const RPPTDesignSystem = () => {
                     backgroundPosition: 'right 1rem center',
                   }}
                 >
-                  {/* FIX: Removed 'selected' attribute from the option */}
                   <option value="" disabled>Select a standard structure</option>
                   {mockTemplates.map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
             </div>
-            
+
             {/* Timeline Suggestion (Mock) */}
             <div className="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg text-yellow-800 font-semibold">
                 <p className="flex items-center gap-2">
@@ -306,8 +439,248 @@ const RPPTDesignSystem = () => {
       </div>
     );
   };
+
+  // --- Upload Document Page (Project Feature) ---
+  const UploadDocumentPage = () => {
+    // Note: In a real app, this page would receive the projectId/milestoneId
+    const [file, setFile] = useState(null);
+    const [milestone, setMilestone] = useState('');
+    const project = getProjectData(selectedProject?.id);
+
+    const handleFileChange = (e) => setFile(e.target.files[0]);
+    const handleMilestoneChange = (e) => setMilestone(e.target.value);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!file || !milestone) {
+            console.log("Please select a file and a milestone.");
+            return;
+        }
+        const message = `File submitted for project ${selectedProject?.title}:\nFile: ${file.name}\nMilestone: ${milestone}\n\nReturning to project details.`;
+        console.log(message);
+        setCurrentPage('project-detail');
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-8">
+        <header className="max-w-xl mx-auto mb-8 flex items-center gap-4">
+          <button
+            onClick={() => setCurrentPage('project-detail')}
+            className="p-3 bg-white rounded-2xl shadow-lg hover:bg-gray-100 transition-all group"
+          >
+            <ChevronRight className="w-6 h-6 text-blue-600 rotate-180" />
+          </button>
+          <h1 className="text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            Upload Deliverable
+          </h1>
+        </header>
+
+        <div className="max-w-xl mx-auto bg-white rounded-3xl p-8 shadow-2xl border-4 border-cyan-200/50">
+            <p className="text-gray-600 mb-6 font-semibold">Submitting for Project: <strong className="text-gray-900">{selectedProject?.title}</strong></p>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            
+            {/* Milestone Selection */}
+            <div>
+              <label htmlFor="milestone" className="block text-sm font-bold text-gray-900 mb-2">Target Milestone</label>
+              <select id="milestone" required value={milestone} onChange={handleMilestoneChange}
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 transition-all appearance-none"
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center' }}
+              >
+                <option value="" disabled>Select a milestone</option>
+                {project?.milestones.map((m) => (
+                    <option key={m.id} value={m.title} disabled={m.status === 'completed'}>
+                        {m.title} ({m.status === 'completed' ? 'Completed' : m.status.charAt(0).toUpperCase() + m.status.slice(1)})
+                    </option>
+                ))}
+              </select>
+            </div>
+
+            {/* File Input */}
+            <div>
+              <label htmlFor="file" className="block text-sm font-bold text-gray-900 mb-2">Select Document File (PDF, DOCX, Code)</label>
+              <input type="file" id="file" required onChange={handleFileChange}
+                className="w-full text-gray-700 py-3 px-4 bg-gray-50 rounded-xl border-2 border-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition duration-300"
+              />
+            </div>
+
+            {/* Submission Button */}
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-2xl font-black text-lg hover:from-blue-500 hover:to-cyan-500 transition-all transform hover:scale-[1.01] shadow-xl flex items-center justify-center gap-2"
+            >
+              <Upload className="w-5 h-5" />
+              Upload & Create New Version
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  };
+
+  // --- Review Submission Page (Supervisor Feature) ---
+  const ReviewSubmissionPage = () => {
+    // Mock review data for the purpose of the page
+    const reviewTarget = pendingReviews.find(r => r.id === 3) || pendingReviews[0];
+    const project = getProjectData(reviewTarget.projectId);
+    const [commentText, setCommentText] = useState('');
+
+    const handleReviewAction = (action) => {
+        console.log(`SUPERVISOR ACTION: ${action} for ${reviewTarget.docName} (Project ${project.details.title})`);
+        setCurrentPage('supervisor'); // Return to supervisor dashboard after action
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-8">
+        <header className="max-w-7xl mx-auto mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setCurrentPage('supervisor')}
+              className="p-3 bg-white rounded-2xl shadow-lg hover:bg-gray-100 transition-all group"
+            >
+              <ChevronRight className="w-6 h-6 text-purple-600 rotate-180" />
+            </button>
+            <h1 className="text-4xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              Review Submission
+            </h1>
+          </div>
+          <div className="flex gap-3">
+             <button
+              onClick={() => handleReviewAction('REQUEST REVISION')}
+              className="px-6 py-3 bg-orange-500 text-white rounded-2xl font-bold hover:bg-orange-600 transition-all transform hover:scale-105 shadow-lg flex items-center gap-2"
+            >
+              <AlertCircle className="w-5 h-5" /> Request Revision
+            </button>
+            <button
+              onClick={() => handleReviewAction('APPROVE')}
+              className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl font-bold hover:from-green-500 hover:to-emerald-500 transition-all transform hover:scale-105 shadow-lg flex items-center gap-2"
+            >
+              <Check className="w-5 h-5" /> Approve Submission
+            </button>
+          </div>
+        </header>
+
+        <div className="max-w-7xl mx-auto grid grid-cols-3 gap-8">
+            {/* Document Viewer (Left 2/3) */}
+            <div className="col-span-2 space-y-6">
+                <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg min-h-[500px]">
+                    <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                        <FileText className="w-5 h-5 text-blue-600"/> Document Viewer: <span className="font-medium text-purple-600">{reviewTarget.docName}</span>
+                    </h2>
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center text-gray-500">
+                        <Minimize2 className="w-12 h-12 mx-auto mb-3"/>
+                        <p>Document preview for inline commenting loads here.</p>
+                        <p className="text-sm">(Mock viewing area)</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Review & Feedback (Right 1/3) */}
+            <div className="col-span-1 space-y-6">
+                <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg">
+                    <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                        <Star className="w-5 h-5 text-yellow-600"/> Submission Details
+                    </h2>
+                    <p className="text-sm font-semibold text-gray-600 mb-2">Project: <span className="font-bold text-gray-900">{project.details.title}</span></p>
+                    <p className="text-sm font-semibold text-gray-600 mb-2">Student: <span className="font-bold text-gray-900">{reviewTarget.student}</span></p>
+                    <p className="text-sm font-semibold text-gray-600 mb-2">Submitted: <span className="font-bold text-gray-900">{reviewTarget.submitted}</span></p>
+                    <p className="text-sm font-semibold text-gray-600">Priority: <span className={`font-bold ${reviewTarget.priority === 'high' ? 'text-red-600' : 'text-orange-600'}`}>{reviewTarget.priority}</span></p>
+                </div>
+
+                <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg">
+                    <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                        <MessageSquare className="w-5 h-5 text-blue-600"/> Global Feedback
+                    </h2>
+                    <textarea
+                      placeholder="Add overall comments, feedback, or general revision requests here."
+                      rows="6"
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 resize-none text-sm"
+                    ></textarea>
+                    <button
+                      onClick={() => console.log(`Feedback submitted: ${commentText}`)}
+                      className="mt-3 w-full py-2 bg-blue-500 text-white rounded-xl font-bold hover:bg-blue-600 transition"
+                    >
+                      Save Draft Comment
+                    </button>
+                </div>
+            </div>
+        </div>
+      </div>
+    );
+  };
+
+  // --- Export Page (Student/Project Feature) ---
+  const ExportProjectPage = () => (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-8 flex items-center justify-center">
+      <div className="max-w-lg w-full text-center bg-white rounded-3xl p-10 shadow-2xl border-4 border-cyan-200/50">
+        <Upload className="w-16 h-16 mx-auto text-cyan-600 mb-6"/>
+        <h1 className="text-3xl font-black text-gray-900 mb-3">Export Project Artifacts</h1>
+        <p className="text-gray-600 mb-6">Select the format and content you wish to export for the **{selectedProject?.title || 'Current Project'}**.</p>
+
+        <div className="space-y-4 mb-8">
+          <button className="w-full py-3 bg-cyan-100 text-cyan-800 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-cyan-200 transition-all">
+            <FileText className="w-5 h-5"/> Export Final Report (PDF)
+          </button>
+          <button className="w-full py-3 bg-blue-100 text-blue-800 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-blue-200 transition-all">
+            <Database className="w-5 h-5"/> Export Audit Log (JSON/CSV)
+          </button>
+        </div>
+
+        <button
+          onClick={() => setCurrentPage('project-detail')}
+          className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-2xl font-bold hover:from-blue-500 hover:to-cyan-500 transition-all transform hover:scale-[1.01] shadow-xl"
+        >
+          Go Back to Project Details
+        </button>
+      </div>
+    </div>
+  );
+
+  // --- Submit Deliverable Page (Student/Project Feature) ---
+  const SubmitDeliverablePage = () => (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-8 flex items-center justify-center">
+      <div className="max-w-lg w-full text-center bg-white rounded-3xl p-10 shadow-2xl border-4 border-pink-200/50">
+        <Send className="w-16 h-16 mx-auto text-purple-600 mb-6"/>
+        <h1 className="text-3xl font-black text-gray-900 mb-3">Formal Submission</h1>
+        <p className="text-gray-600 mb-6">This action locks the current document version and sends it for **Supervisor Approval** for **{selectedProject?.title || 'Current Project'}**.</p>
+
+        <div className="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg text-yellow-800 font-semibold mb-6">
+            <p className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5"/>
+                Are you sure? This version cannot be edited after submission.
+            </p>
+        </div>
+
+        <button
+          onClick={() => {
+            console.log(`FORMAL SUBMISSION: Project ${selectedProject?.id} submitted for review.`);
+            setCurrentPage('project-detail'); // Simulate submission complete
+          }}
+          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-2xl font-bold hover:from-purple-500 hover:to-pink-500 transition-all transform hover:scale-[1.01] shadow-xl"
+        >
+          Confirm & Submit to Supervisor
+        </button>
+        <button
+          onClick={() => setCurrentPage('project-detail')}
+          className="w-full mt-4 py-3 text-gray-600 rounded-2xl font-bold hover:bg-gray-50 transition-all"
+        >
+          Cancel and Return
+        </button>
+      </div>
+    </div>
+  );
+
   // --- Student Dashboard ---
   const StudentDashboard = () => {
+    // Static data needed for the dashboard (not project-specific)
+    const recentActivities = [
+      { id: 1, type: 'approval', message: 'Dr. Rahman approved your Literature Review', time: '2 hours ago', icon: '✅', color: 'text-green-600' },
+      { id: 2, type: 'comment', message: 'New comment on Methodology document', time: '5 hours ago', icon: '💬', color: 'text-blue-600' },
+      { id: 3, type: 'deadline', message: 'Data Collection due in 3 days', time: '1 day ago', icon: '⚠️', color: 'text-orange-600' },
+      { id: 4, type: 'upload', message: 'Nafiz uploaded Dataset Analysis v2', time: '1 day ago', icon: '📤', color: 'text-purple-600' }
+    ];
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
         {/* Floating Header */}
@@ -384,8 +757,7 @@ const RPPTDesignSystem = () => {
             <div className="lg:col-span-2">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-3xl font-black text-gray-900">My Projects 🚀</h2>
-                {/* --- UPDATED BUTTON --- */}
-                <button 
+                <button
                   onClick={() => setCurrentPage('create-project')}
                   className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-bold hover:from-blue-500 hover:to-purple-500 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
@@ -408,7 +780,6 @@ const RPPTDesignSystem = () => {
 
                     <div className="flex items-start justify-between mb-4 relative z-10">
                       <div className="flex items-start gap-4 flex-1">
-                        {/* 1. ENHANCEMENT: Project Icon Hover Shadow */}
                         <div className={`w-16 h-16 bg-gradient-to-br ${project.color} rounded-2xl flex items-center justify-center text-3xl shadow-lg transform group-hover:scale-110 group-hover:rotate-6 transition-all group-hover:shadow-2xl`}>
                           {project.icon}
                         </div>
@@ -426,7 +797,6 @@ const RPPTDesignSystem = () => {
                     <div className="mb-4 relative z-10">
                       <div className="flex items-center justify-between text-sm text-gray-600 mb-2 font-semibold">
                         <span>Progress</span>
-                        {/* 2. ENHANCEMENT: Progress Text Drop Shadow */}
                         <span className="font-black text-gray-900 text-lg drop-shadow-sm">{project.progress}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
@@ -460,7 +830,7 @@ const RPPTDesignSystem = () => {
                   <h3 className="text-xl font-black text-gray-900">Upcoming Deadlines ⏰</h3>
                 </div>
                 <div className="space-y-3">
-                  {milestones.filter(m => m.status !== 'completed').slice(0, 3).map((milestone, i) => (
+                  {getProjectData(1).milestones.filter(m => m.status !== 'completed').slice(0, 3).map((milestone, i) => (
                     <div key={milestone.id} className="flex items-start gap-3 p-3 rounded-2xl bg-white hover:bg-orange-50 transition-all cursor-pointer border border-orange-100 group">
                       <div className={`w-3 h-3 rounded-full mt-2 animate-pulse ${
                         milestone.status === 'in-progress' ? 'bg-orange-500' : 'bg-gray-400'
@@ -498,13 +868,39 @@ const RPPTDesignSystem = () => {
             </div>
           </div>
         </div>
+        <style>{`
+          @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+          .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 3s ease infinite;
+          }
+        `}</style>
       </div>
     );
   };
 
   // --- Project Detail Page ---
   const ProjectDetailPage = () => {
-    // Render logic remains the same
+    // Dynamically retrieve project-specific data based on the selected project ID
+    const project = getProjectData(selectedProject?.id);
+
+    if (!project) {
+        return (
+            <div className="min-h-screen bg-gray-50 p-10 text-center">
+                <p className="text-xl font-bold text-red-600">Project Not Found. Returning to Dashboard...</p>
+                <button onClick={() => setCurrentPage('dashboard')} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">Go to Dashboard</button>
+            </div>
+        );
+    }
+
+    const milestones = project.milestones;
+    const documents = project.documents;
+    const comments = project.comments;
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
         <header className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-50 shadow-sm">
@@ -518,15 +914,23 @@ const RPPTDesignSystem = () => {
                   <ChevronRight className="w-6 h-6 text-gray-600 group-hover:text-blue-600 rotate-180 transition" />
                 </button>
                 <div>
-                  <h1 className="text-2xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{selectedProject?.title}</h1>
+                  <h1 className="text-2xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{project.details.title}</h1>
                   <p className="text-sm text-gray-600 font-semibold">Project Overview</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button className="px-5 py-2.5 border-2 border-gray-300 rounded-2xl font-bold text-gray-700 hover:bg-gray-50 transition-all transform hover:scale-105">
+                {/* --- UPDATED: Export Button navigates to new page --- */}
+                <button
+                  onClick={() => setCurrentPage('export-project')}
+                  className="px-5 py-2.5 border-2 border-gray-300 rounded-2xl font-bold text-gray-700 hover:bg-gray-50 transition-all transform hover:scale-105"
+                >
                   📊 Export
                 </button>
-                <button className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-bold hover:from-blue-500 hover:to-purple-500 transition-all transform hover:scale-105 shadow-lg">
+                {/* --- UPDATED: Submit Button navigates to new page --- */}
+                <button
+                  onClick={() => setCurrentPage('submit-deliverable')}
+                  className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-bold hover:from-blue-500 hover:to-purple-500 transition-all transform hover:scale-105 shadow-lg"
+                >
                   📤 Submit Deliverable
                 </button>
               </div>
@@ -535,35 +939,35 @@ const RPPTDesignSystem = () => {
         </header>
         <div className="max-w-7xl mx-auto px-6 py-8">
           {/* Project Hero Card */}
-          <div className={`bg-gradient-to-r ${selectedProject?.color} rounded-3xl p-8 mb-8 text-white shadow-2xl relative overflow-hidden`}>
+          <div className={`bg-gradient-to-r ${project.details.color} rounded-3xl p-8 mb-8 text-white shadow-2xl relative overflow-hidden`}>
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
             <div className="relative z-10">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-4xl shadow-xl">
-                  {selectedProject?.icon}
+                  {project.details.icon}
                 </div>
                 <div>
-                  <h2 className="text-3xl font-black mb-1">{selectedProject?.title}</h2>
-                  <p className="text-white/80 font-semibold">Supervised by {selectedProject?.supervisor}</p>
+                  <h2 className="text-3xl font-black mb-1">{project.details.title}</h2>
+                  <p className="text-white/80 font-semibold">Supervised by {project.details.supervisor}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4">
                   <p className="text-white/80 text-sm mb-1 font-semibold">Progress</p>
-                  <p className="text-4xl font-black">{selectedProject?.progress}%</p>
+                  <p className="text-4xl font-black">{project.details.progress}%</p>
                 </div>
                 <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4">
                   <p className="text-white/80 text-sm mb-1 font-semibold">Milestones</p>
-                  <p className="text-4xl font-black">{selectedProject?.completed}/{selectedProject?.milestones}</p>
+                  <p className="text-4xl font-black">{project.details.completed}/{project.details.milestones}</p>
                 </div>
                 <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4">
                   <p className="text-white/80 text-sm mb-1 font-semibold">Due Date</p>
-                  <p className="text-2xl font-black">{selectedProject?.dueDate}</p>
+                  <p className="text-2xl font-black">{project.details.dueDate}</p>
                 </div>
                 <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4">
                   <p className="text-white/80 text-sm mb-1 font-semibold">Status</p>
-                  <p className="text-2xl font-black">{selectedProject?.status}</p>
+                  <p className="text-2xl font-black">{project.details.status}</p>
                 </div>
               </div>
             </div>
@@ -589,7 +993,8 @@ const RPPTDesignSystem = () => {
               </button>
             ))}
           </div>
-          {/* Milestones Content */}
+
+          {/* --- Milestones Content --- */}
           {activeTab === 'milestones' && (
             <div className="grid grid-cols-1 gap-4">
               {milestones.map((milestone, index) => (
@@ -618,7 +1023,7 @@ const RPPTDesignSystem = () => {
                           <div className="flex items-center gap-4 text-sm font-semibold">
                             <span className="text-gray-600">👤 Owner: <strong className="text-gray-900">{milestone.owner}</strong></span>
                             <span className="text-gray-600">📅 Due: <strong className="text-gray-900">{milestone.dueDate}</strong></span>
-                            <span className="text-gray-600">📄 Documents: <strong className="text-gray-900">{milestone.documents}</strong></span>
+                            <span className="text-gray-600">📄 Documents: <strong className="text-gray-900">{milestone.documents || 0}</strong></span>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -644,7 +1049,10 @@ const RPPTDesignSystem = () => {
                       </div>
                       {milestone.status === 'in-progress' && (
                         <div className="flex gap-3 mt-4">
-                          <button className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-bold hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-2 shadow-lg transform hover:scale-105">
+                          <button 
+                            onClick={() => setCurrentPage('upload-document')}
+                            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-bold hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-2 shadow-lg transform hover:scale-105"
+                          >
                             <Upload className="w-4 h-4" /> Upload Document
                           </button>
                           <button className="px-5 py-2.5 border-2 border-gray-300 rounded-2xl font-bold text-gray-700 hover:bg-gray-50 transition-all transform hover:scale-105">
@@ -663,7 +1071,7 @@ const RPPTDesignSystem = () => {
                             </div>
                             <div className="flex-1">
                               <p className="font-bold text-green-900">Completed & Approved ✨</p>
-                              <p className="text-sm text-green-700">Great work! Supervisor feedback available.</p>
+                              <p className="text-sm text-green-700">Supervisor feedback available.</p>
                             </div>
                             <button className="px-4 py-2 bg-white border-2 border-green-300 rounded-xl font-bold text-green-700 hover:bg-green-50 transition-all">
                               View Feedback
@@ -677,23 +1085,21 @@ const RPPTDesignSystem = () => {
               ))}
             </div>
           )}
-          {/* Documents Tab */}
+          {/* --- Documents Tab --- */}
           {activeTab === 'documents' && (
             <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-black text-gray-900">Project Documents 📄</h3>
-                <button className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-bold hover:from-blue-500 hover:to-purple-500 transition-all transform hover:scale-105 shadow-lg flex items-center gap-2">
+                <button 
+                  onClick={() => setCurrentPage('upload-document')}
+                  className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-bold hover:from-blue-500 hover:to-purple-500 transition-all transform hover:scale-105 shadow-lg flex items-center gap-2"
+                >
                   <Upload className="w-4 h-4" /> Upload New
                 </button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { name: 'Literature_Review_v3.pdf', size: '2.4 MB', date: '2025-09-15', versions: 3, status: 'approved' },
-                  { name: 'Methodology_Design_v2.docx', size: '1.8 MB', date: '2025-09-30', versions: 2, status: 'approved' },
-                  { name: 'Dataset_Analysis_v2.xlsx', size: '5.2 MB', date: '2025-10-10', versions: 2, status: 'review' },
-                  { name: 'Project_Proposal_v1.pdf', size: '1.2 MB', date: '2025-08-20', versions: 1, status: 'approved' }
-                ].map((doc, i) => (
+                {documents.map((doc, i) => (
                   <div key={i} className="p-4 rounded-2xl border-2 border-gray-200 hover:border-blue-400 transition-all group cursor-pointer bg-gradient-to-br from-white to-gray-50 hover:shadow-lg">
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all">
@@ -704,7 +1110,7 @@ const RPPTDesignSystem = () => {
                         <div className="flex items-center gap-3 text-xs text-gray-600 font-semibold mb-2">
                           <span>📦 {doc.size}</span>
                           <span>📅 {doc.date}</span>
-                          <span>🔄 v{doc.versions}</span>
+                          <span>🔄 v{doc.versions || 1}</span>
                         </div>
                         <span className={`inline-block px-3 py-1 rounded-full text-xs font-black ${
                           doc.status === 'approved' ? 'bg-gradient-to-r from-green-500 to-emerald-400 text-white' : 'bg-gradient-to-r from-orange-500 to-yellow-400 text-white'
@@ -721,7 +1127,15 @@ const RPPTDesignSystem = () => {
               </div>
             </div>
           )}
-          {/* Team Tab */}
+          {/* --- Timeline Tab (Placeholder) --- */}
+          {activeTab === 'timeline' && (
+            <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg text-center py-16">
+                <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4"/>
+                <h3 className="text-2xl font-black text-gray-900">Visual Timeline Coming Soon</h3>
+                <p className="text-gray-600">A detailed Gantt chart view of all project milestones and dependencies will appear here.</p>
+            </div>
+          )}
+          {/* --- Team Tab --- */}
           {activeTab === 'team' && (
             <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg">
               <div className="flex items-center justify-between mb-6">
@@ -738,7 +1152,7 @@ const RPPTDesignSystem = () => {
                   { name: 'Nafiz Imtiaz Labib', role: 'Data Analyst', id: '0112310422', avatar: '📊', color: 'from-green-500 to-emerald-400' },
                   { name: 'Raiyana Islam Aahir', role: 'Designer', id: '0112310363', avatar: '🎨', color: 'from-orange-500 to-yellow-400' },
                   { name: 'Md. Imjam Hosen', role: 'Tester', id: '0112230335', avatar: '🧪', color: 'from-red-500 to-pink-400' },
-                  { name: 'Dr. Rahman', role: 'Supervisor', id: 'Faculty', avatar: '👨‍🏫', color: 'from-indigo-500 to-purple-400' }
+                  { name: project.details.supervisor, role: 'Supervisor', id: 'Faculty', avatar: '👨‍🏫', color: 'from-indigo-500 to-purple-400' }
                 ].map((member, i) => (
                   <div key={i} className="p-4 rounded-2xl border-2 border-gray-200 hover:border-purple-400 transition-all group cursor-pointer bg-gradient-to-br from-white to-gray-50 hover:shadow-lg">
                     <div className="flex items-center gap-4">
@@ -759,6 +1173,43 @@ const RPPTDesignSystem = () => {
               </div>
             </div>
           )}
+          {/* --- Comments Tab --- */}
+          {activeTab === 'comments' && (
+            <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg">
+              <h3 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
+                <MessageSquare className="w-6 h-6 text-purple-600"/> Discussion Thread
+              </h3>
+
+              <div className="space-y-6 max-h-[500px] overflow-y-auto mb-6 pr-4">
+                {comments.map(comment => (
+                  <div key={comment.id} className="flex gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 transition">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md ${comment.author.includes('Dr.') ? 'bg-indigo-500' : 'bg-blue-500'}`}>
+                        {comment.author[0]}
+                    </div>
+                    <div className="flex-1">
+                        <p className="font-bold text-gray-900">{comment.author} <span className="text-xs font-normal text-gray-500 ml-2">{comment.time}</span></p>
+                        <p className="text-gray-700 mt-1">{comment.text}</p>
+                        <button className="text-xs font-semibold text-blue-500 hover:text-blue-700 mt-1">Reply</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Comment Input */}
+              <div className="border-t pt-4">
+                <div className="flex gap-3">
+                  <textarea
+                    placeholder="Add a new comment or mention a team member (@name)"
+                    rows="3"
+                    className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 resize-none"
+                  ></textarea>
+                  <button className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl flex items-center justify-center hover:from-purple-500 hover:to-pink-500 shadow-lg transform hover:scale-105 transition-all">
+                    <Send className="w-6 h-6"/>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -770,6 +1221,13 @@ const RPPTDesignSystem = () => {
     const netAccumulatedCashFlow = strategicAnalysisData.financial[strategicAnalysisData.financial.length - 1].accumulated.toFixed(2);
     const breakEvenYear = strategicAnalysisData.financial.find(f => f.accumulated >= 0)?.year || 'N/A';
     const lastNegativeYear = strategicAnalysisData.financial.filter(f => f.accumulated < 0).pop()?.year || 0;
+
+    // Static data needed for the dashboard (not project-specific)
+    const recentActivities = [
+        { id: 1, type: 'approval', message: 'Dr. Rahman approved Literature Review for Project 1', time: '2 hours ago', icon: '✅', color: 'text-green-600' },
+        { id: 2, type: 'comment', message: 'New comment on Methodology document for Project 2', time: '5 hours ago', icon: '💬', color: 'text-blue-600' },
+    ];
+
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50">
@@ -826,8 +1284,8 @@ const RPPTDesignSystem = () => {
           {/* Supervisor Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             {[
-              { icon: FileText, label: 'Supervised Projects', value: '12', color: 'from-purple-500 to-pink-400', emoji: '📚' },
-              { icon: Clock, label: 'Pending Reviews', value: '8', color: 'from-orange-500 to-red-400', emoji: '⏰' },
+              { icon: FileText, label: 'Supervised Projects', value: projects.length, color: 'from-purple-500 to-pink-400', emoji: '📚' },
+              { icon: Clock, label: 'Pending Reviews', value: pendingReviews.length, color: 'from-orange-500 to-red-400', emoji: '⏰' },
               { icon: AlertCircle, label: 'At Risk', value: '3', color: 'from-red-500 to-pink-500', emoji: '⚠️' },
               { icon: Award, label: 'Approved This Month', value: '45', color: 'from-green-500 to-emerald-400', emoji: '🏆' }
             ].map((stat, i) => (
@@ -835,7 +1293,7 @@ const RPPTDesignSystem = () => {
             ))}
           </div>
 
-          {/* --- Strategic Overview (New Section) --- */}
+          {/* --- Strategic Overview --- */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             {/* Financial Feasibility */}
             <div className="lg:col-span-1 bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg">
@@ -903,11 +1361,7 @@ const RPPTDesignSystem = () => {
               </div>
             </div>
             <div className="space-y-4">
-              {[
-                { student: 'Ahnaf Abid Shan', project: 'Machine Learning in Healthcare', document: 'Literature Review v3', submitted: '2 days ago', priority: 'high', avatar: '🧑‍💻' },
-                { student: 'Mahmudul Hasan', project: 'Blockchain Security', document: 'Methodology Design', submitted: '1 day ago', priority: 'medium', avatar: '👨‍💻' },
-                { student: 'Nafiz Imtiaz', project: 'IoT Agriculture', document: 'Implementation Report', submitted: '5 hours ago', priority: 'high', avatar: '📊' }
-              ].map((review, i) => (
+              {pendingReviews.map((review, i) => (
                 <div key={i} className="flex items-center justify-between p-5 rounded-2xl border-2 border-gray-200 hover:border-purple-400 transition-all group bg-gradient-to-r from-white to-purple-50/30 hover:shadow-lg cursor-pointer">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:rotate-6 transition-all text-2xl">
@@ -924,7 +1378,11 @@ const RPPTDesignSystem = () => {
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <button className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl font-bold hover:from-purple-500 hover:to-pink-500 transition-all flex items-center gap-2 shadow-lg transform hover:scale-105">
+                    <span className="text-sm text-gray-500 font-semibold">{review.submitted}</span>
+                    <button 
+                      onClick={() => setCurrentPage('review-submission')}
+                      className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl font-bold hover:from-purple-500 hover:to-pink-500 transition-all flex items-center gap-2 shadow-lg transform hover:scale-105"
+                    >
                       <Eye className="w-4 h-4" /> Review
                     </button>
                     <button className="px-5 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl font-bold hover:from-green-500 hover:to-emerald-500 transition-all flex items-center gap-2 shadow-lg transform hover:scale-105">
@@ -991,54 +1449,43 @@ const RPPTDesignSystem = () => {
     );
   };
 
-  // --- Admin Dashboard (New) ---
+  // --- Admin Dashboard ---
   const AdminDashboard = () => {
-    // Mock Admin specific data
-    const adminStats = [
-      { label: 'Total Projects', value: '1,245', color: 'from-blue-500 to-cyan-400', icon: '📚' },
-      { label: 'Active Users (24h)', value: '312', color: 'from-green-500 to-emerald-400', icon: '👤' },
-      { label: 'Pending Reviews', value: '25', color: 'from-orange-500 to-yellow-400', icon: '⏰' },
-      { label: 'Unverified Checksums', value: '0', color: 'from-red-500 to-pink-500', icon: '⚠️' }
-    ];
-    const userList = [
-      { id: '12345', name: 'Dr. Rahman', role: 'Supervisor', status: 'Active', color: 'bg-indigo-500' },
-      { id: '54321', name: 'Ahnaf Abid Shan', role: 'Student', status: 'Active', color: 'bg-blue-500' },
-      { id: '98765', name: 'Admin User 01', role: 'Administrator', status: 'Active', color: 'bg-gray-700' },
-      { id: '67890', name: 'Nafiz Imtiaz', role: 'Student', status: 'Inactive', color: 'bg-yellow-500' },
-    ];
-    const auditEvents = [
-      { id: 1, user: 'Admin User 01', action: 'Export Audit Log', time: '1 min ago', status: 'Success' },
-      { id: 2, user: 'Dr. Rahman', action: 'Approved Literature Review', time: '2 hours ago', status: 'Success' },
-      { id: 3, user: 'System', action: 'Scheduled Backup', time: '4 hours ago', status: 'Success' },
-      { id: 4, user: 'Student 0423', action: 'Failed Submission Checksum', time: '1 day ago', status: 'Warning' },
+    const adminUsers = [
+      { id: 12345, name: 'Dr. Rahman', role: 'Supervisor', avatar: 'D', color: 'bg-indigo-500', status: 'Active' },
+      { id: 54321, name: 'Ahnaf Abid Shan', role: 'Student', avatar: 'A', color: 'bg-blue-500', status: 'Active' },
+      { id: 98765, name: 'Admin User 01', role: 'Administrator', avatar: 'A', color: 'bg-gray-700', status: 'Active' },
+      { id: 33503, name: 'Nafiz Imtiaz', role: 'Student', avatar: 'N', color: 'bg-yellow-500', status: 'Inactive' },
     ];
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-100 via-indigo-50 to-purple-50">
-        {/* Header */}
-        <header className="bg-white/95 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-50 shadow-md">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50">
+        <header className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-50 shadow-sm">
           <div className="max-w-7xl mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-8">
                 <div className="flex items-center gap-3 group cursor-pointer">
-                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-700 to-gray-600 rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-2xl font-black text-white">A</span>
+                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all transform group-hover:scale-110 group-hover:rotate-6">
+                    <span className="text-2xl font-black text-white">R</span>
                   </div>
-                  <span className="text-2xl font-black bg-gradient-to-r from-indigo-700 to-gray-600 bg-clip-text text-transparent">ADMIN PORTAL</span>
+                  <span className="text-2xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">RPPT Admin</span>
                 </div>
+                <nav className="hidden md:flex gap-6">
+                  <a href="#" className="text-indigo-600 font-bold relative group">
+                    Overview
+                    <span className="absolute -bottom-1 left-0 w-full h-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"></span>
+                  </a>
+                  <a href="#" className="text-gray-600 hover:text-gray-900 font-semibold transition-all hover:scale-110 inline-block">Audit</a>
+                  <a href="#" className="text-gray-600 hover:text-gray-900 font-semibold transition-all hover:scale-110 inline-block">Settings</a>
+                </nav>
               </div>
+
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => setCurrentPage('login')}
-                  className="p-3 bg-gray-100 hover:bg-red-50 rounded-2xl transition-all group border border-gray-300"
+                  className="p-3 hover:bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl transition-all group"
                 >
-                  <User className="w-5 h-5 text-gray-600 group-hover:text-red-600 transition" />
-                </button>
-                <button
-                  onClick={() => setCurrentPage('dashboard')}
-                  className="px-4 py-2 bg-indigo-500 text-white rounded-xl font-semibold hover:bg-indigo-600 transition-all"
-                >
-                  Exit Admin
+                  <User className="w-5 h-5 text-gray-600 group-hover:text-purple-600 transition" />
                 </button>
               </div>
             </div>
@@ -1047,132 +1494,131 @@ const RPPTDesignSystem = () => {
 
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="mb-8">
-            <h1 className="text-5xl font-black text-gray-800 mb-3 flex items-center gap-3">
-              <Settings className="w-8 h-8 text-indigo-600" /> System Control Overview
+            <h1 className="text-5xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
+              System Administrator ⚙️
             </h1>
-            <p className="text-gray-600 text-xl">Administrative tools for integrity, compliance, and user management.</p>
-          </div>
-
-          {/* Admin Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            {adminStats.map((stat, i) => (
-              <div key={i} className={`bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-xl transition-all transform hover:scale-[1.03] cursor-pointer group`}>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-bold text-gray-500 uppercase">{stat.label}</span>
-                  <span className="text-2xl">{stat.icon}</span>
-                </div>
-                <p className="text-4xl font-black text-gray-900">{stat.value}</p>
-              </div>
-            ))}
+            <p className="text-gray-600 text-xl">Central management for users, integrity, and system health.</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* User & Role Management */}
-            <div className="lg:col-span-2 bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-xl">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <Users className="w-6 h-6 text-indigo-600" /> User & Role Management
+            {/* System Health / Metrics (Left Column) */}
+            <div className="lg:col-span-1 space-y-6">
+              <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg">
+                <h2 className="text-2xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                  <Server className="w-6 h-6 text-indigo-600"/> System Metrics
                 </h2>
-                <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-md">
-                  <Plus className="w-4 h-4" /> New Account
-                </button>
-              </div>
-              <div className="space-y-3">
-                {userList.map((user, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:bg-indigo-50 transition-all">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 ${user.color} rounded-full flex items-center justify-center text-white font-bold text-lg`}>
-                        {user.name.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-bold text-gray-900">{user.name}</p>
-                        <p className="text-sm text-gray-500">{user.role} | ID: {user.id}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`text-xs font-bold px-3 py-1 rounded-full ${user.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                        {user.status}
-                      </span>
-                      <button className="p-1 hover:bg-gray-200 rounded-lg text-gray-500 hover:text-indigo-600"><Edit className="w-5 h-5" /></button>
-                      <button className="p-1 hover:bg-red-100 rounded-lg text-gray-500 hover:text-red-600"><Trash2 className="w-5 h-5" /></button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* System Integrity & Audit Sidebar */}
-            <div className="space-y-6">
-              {/* Audit Controls */}
-              <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-xl">
-                <div className="flex items-center gap-3 mb-5">
-                  <Shield className="w-6 h-6 text-red-600" />
-                  <h3 className="text-xl font-black text-gray-900">Integrity & Compliance</h3>
-                </div>
-                <p className="text-sm text-gray-600 mb-4">Ensure academic integrity and generate verifiable reports.</p>
-                <button className="w-full mb-3 px-4 py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition-all flex items-center justify-center gap-2 shadow-lg">
-                  <CheckCircle className="w-4 h-4" /> Run Checksum Verification
-                </button>
-                <button className="w-full px-4 py-3 border-2 border-indigo-300 text-indigo-700 rounded-xl font-bold hover:bg-indigo-50 transition-all flex items-center justify-center gap-2">
-                  <Download className="w-4 h-4" /> Export All Audit Logs
-                </button>
-              </div>
-
-              {/* System Health */}
-              <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-xl">
-                <div className="flex items-center gap-3 mb-5">
-                  <Server className="w-6 h-6 text-green-600" />
-                  <h3 className="text-xl font-black text-gray-900">System Health</h3>
-                </div>
                 <div className="space-y-3">
-                  <p className="flex justify-between text-sm font-semibold text-gray-700">
-                    Database Usage: <span className="font-black text-green-600">65% (Stable)</span>
-                  </p>
-                  <p className="flex justify-between text-sm font-semibold text-gray-700">
-                    Uptime: <span className="font-black text-green-600">99.99%</span>
-                  </p>
-                  <p className="flex justify-between text-sm font-semibold text-gray-700">
-                    Last Backup: <span className="font-black text-gray-700">2 hours ago</span>
-                  </p>
+                  <div className="flex justify-between items-center text-gray-700 font-semibold">
+                    <span>Uptime</span>
+                    <span className="font-black text-green-600">99.9%</span>
+                  </div>
+                  <div className="flex justify-between items-center text-gray-700 font-semibold">
+                    <span>Active Sessions</span>
+                    <span className="font-black">148</span>
+                  </div>
+                  <div className="flex justify-between items-center text-gray-700 font-semibold">
+                    <span>Total Storage</span>
+                    <span className="font-black">5.2 TB</span>
+                  </div>
+                  <div className="pt-2 border-t border-gray-100 flex justify-between items-center text-gray-700 font-semibold">
+                    <span>Projects Total</span>
+                    <span className="font-black">{projects.length}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Data Integrity Check */}
+              <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="text-xl font-black text-gray-500 mb-1 uppercase tracking-wider">UNVERIFIED CHECKSUMS</h2>
+                    <span className="text-5xl font-black text-gray-900">0</span>
+                  </div>
+                  <AlertCircle className="w-8 h-8 text-yellow-500" />
+                </div>
+              </div>
+
+              {/* Security & Audit Actions */}
+              <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg">
+                <h2 className="text-2xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                  <Shield className="w-6 h-6 text-purple-600"/> Audit & Security
+                </h2>
+                <div className="space-y-3">
+                  <button className="w-full flex items-center gap-2 py-3 px-4 rounded-xl bg-purple-50 text-purple-800 font-bold hover:bg-purple-100 transition">
+                    <Download className="w-4 h-4" /> Export Full Audit Log
+                  </button>
+                  <button className="w-full flex items-center gap-2 py-3 px-4 rounded-xl bg-gray-50 text-gray-800 font-bold hover:bg-gray-100 transition">
+                    <Activity className="w-4 h-4" /> View Recent System Activity
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* User & Role Management (Right Column) */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-lg">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
+                    <Users className="w-6 h-6 text-blue-600"/> User & Role Management
+                  </h2>
+                  <button
+                    onClick={() => setCurrentPage('create-user')}
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl font-bold hover:from-purple-500 hover:to-indigo-500 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  >
+                    <Plus className="w-5 h-5" /> New Account
+                  </button>
+                </div>
+
+                {/* User List */}
+                <div className="space-y-3">
+                  {adminUsers.map(user => (
+                    <div key={user.id} className="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-indigo-400 transition-all bg-gray-50 hover:bg-white">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-black shadow-md ${user.color}`}>
+                          {user.avatar}
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900">{user.name}</p>
+                          <p className="text-sm text-gray-600">{user.role} | ID: {user.id}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={`px-3 py-1 rounded-full text-xs font-black ${
+                          user.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {user.status}
+                        </span>
+                        <button className="p-2 text-gray-500 hover:text-blue-600 transition">
+                          <Edit className="w-5 h-5" />
+                        </button>
+                        <button className="p-2 text-gray-500 hover:text-red-600 transition">
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
-          
-          {/* Recent Audit Log */}
-          <div className="bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-xl mt-8">
-            <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
-              <Activity className="w-6 h-6 text-indigo-600" /> Recent System Activity Log
-            </h2>
-            <div className="space-y-3">
-              {auditEvents.map((event, i) => (
-                <div key={i} className={`flex items-center justify-between p-4 rounded-xl border ${event.status === 'Warning' ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white'} hover:shadow-sm transition-all`}>
-                  <div className="flex items-center gap-4">
-                    <span className={`w-2 h-2 rounded-full ${event.status === 'Warning' ? 'bg-red-500' : 'bg-green-500'} animate-pulse`}></span>
-                    <div>
-                      <p className="font-bold text-gray-800">{event.action}</p>
-                      <p className="text-xs text-gray-500">User: {event.user}</p>
-                    </div>
-                  </div>
-                  <span className={`text-sm font-semibold ${event.status === 'Warning' ? 'text-red-600' : 'text-gray-500'}`}>{event.time}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
         </div>
       </div>
     );
   };
 
-  // --- Page Router ---
+  // Page Router
   const pages = {
     'login': <LoginPage />,
     'dashboard': <StudentDashboard />,
     'project-detail': <ProjectDetailPage />,
     'supervisor': <SupervisorDashboard />,
-    'admin': <AdminDashboard />, // Added Admin Dashboard
-    'create-project': <CreateProjectPage />, 
+    'admin': <AdminDashboard />,
+    'create-project': <CreateProjectPage />,
+    'create-user': <CreateUserPage />,
+    'upload-document': <UploadDocumentPage />,
+    'export-project': <ExportProjectPage />,
+    'submit-deliverable': <SubmitDeliverablePage />,
+    'review-submission': <ReviewSubmissionPage />,
   };
 
   return (
@@ -1202,9 +1648,9 @@ const RPPTDesignSystem = () => {
             >
               👨‍🏫 Supervisor
             </button>
-             <button
+            <button
               onClick={() => setCurrentPage('admin')}
-              className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-gray-700 text-white rounded-xl font-bold hover:from-indigo-500 hover:to-gray-600 transition-all transform hover:scale-105 shadow-lg"
+              className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-gray-600 text-white rounded-xl font-bold hover:from-indigo-500 hover:to-gray-500 transition-all transform hover:scale-105 shadow-lg"
             >
               ⚙️ Admin
             </button>
@@ -1229,7 +1675,7 @@ const RPPTDesignSystem = () => {
         .animate-float {
           animation: float 3s ease-in-out infinite;
         }
-        .hover\:scale-102:hover {
+        .hover\\:scale-102:hover {
           transform: scale(1.02);
         }
         .delay-100 {
